@@ -34,10 +34,16 @@ asdf_install_global() {
     return 1
   fi
   asdf install "$aig_plugin" "$aig_ver"
-  if asdf set --help >/dev/null 2>&1; then
-    asdf set -u "$aig_plugin" "$aig_ver"
-  else
-    asdf global "$aig_plugin" "$aig_ver"
-  fi
+  asdf_set_default "$aig_plugin" "$aig_ver"
   echo "✔ $aig_plugin $aig_ver"
+}
+
+# asdf_set_default <plugin> <version>: make it the default. Picks the command the installed asdf has,
+# and keeps its usage text off the terminal.
+asdf_set_default() {
+  if asdf set --help >/dev/null 2>&1; then
+    asdf set -u "$1" "$2" >/dev/null
+  else
+    asdf global "$1" "$2" >/dev/null
+  fi
 }

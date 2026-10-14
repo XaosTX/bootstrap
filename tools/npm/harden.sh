@@ -7,7 +7,7 @@
 # Idempotent. Safe to re-run. Honours DRY_RUN=1.
 # Cross-platform: macOS and Debian/Ubuntu (differs only in the backup layer).
 set -e
-BOOTSTRAP_DIR="${BOOTSTRAP_DIR:-$HOME/g/bootstrap}"
+BOOTSTRAP_DIR="${BOOTSTRAP_DIR:-$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)}"
 . "$BOOTSTRAP_DIR/lib/log.sh"
 
 # *** UNIT IS DAYS on npm 12.x. NOT minutes. ***
