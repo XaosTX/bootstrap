@@ -9,7 +9,7 @@ Sets up a machine: gets the dotfiles, runs their setup, then runs this machine's
 ## What it does
 
 1. Clones `XaosTX/dotfiles` to `~/g/dotfiles`, or pulls it if it's already there.
-2. Runs the dotfiles `bootstrap.sh` with the same flags you gave. Any warning there stops the run.
+2. Runs the dotfiles `install.sh` with the same flags you gave. Any warning there stops the run.
 3. Runs the install steps for this OS, if `--install` is given:
    - `steps/common/` on every OS (fonts).
    - `steps/darwin/` on macOS (Xcode tools, Homebrew, casks, recipes, fzf, iTerm2, node, ruby, vim plugins, misc).
@@ -28,7 +28,7 @@ Sets up a machine: gets the dotfiles, runs their setup, then runs this machine's
 | `--skip-dotfiles` | Run only the install steps. |
 | `--install` | Run the install steps for this OS. |
 | `--optional` | Also run the optional steps. Implies `--install`. |
-| anything else | Passed to the dotfiles `bootstrap.sh` (`--yes`, `--dry-run`, `--choose`, `--profiles`, `--home`). |
+| anything else | Passed to the dotfiles `install.sh` (`--yes`, `--dry-run`, `--choose`, `--profiles`, `--home`). |
 
 ## Status
 

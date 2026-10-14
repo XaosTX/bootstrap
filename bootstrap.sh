@@ -8,7 +8,7 @@
 #   --skip-dotfiles       run only the install steps
 #   --install             also run steps/common and steps/<this OS>
 #   --optional            also run steps/optional (asks per step when interactive; --yes runs them all). Implies --install.
-#   anything else         passed to the dotfiles bootstrap (--yes, --dry-run, --choose, --profiles, --home ...)
+#   anything else         passed to the dotfiles install.sh (--yes, --dry-run, --choose, --profiles, --home ...)
 
 BOOT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 DOT_DIR="${DOTFILES_DIR:-$HOME/g/dotfiles}"
@@ -49,12 +49,12 @@ if [ -z "$SKIP_DOTFILES" ] && [ -n "$DO_CLONE" ]; then
     git clone "$DOT_REPO" "$DOT_DIR" || exit 2
   fi
 fi
-if [ ! -f "$DOT_DIR/bootstrap.sh" ]; then echo "no dotfiles checkout at $DOT_DIR" >&2; exit 2; fi
+if [ ! -f "$DOT_DIR/install.sh" ]; then echo "no dotfiles checkout at $DOT_DIR" >&2; exit 2; fi
 export DF_ROOT="$DOT_DIR" DOTFILES="$DOT_DIR"
 
 # 2. the dotfiles setup. Warnings from it stop the run, as they do there.
 if [ -z "$SKIP_DOTFILES" ]; then
-  "$DOT_DIR/bootstrap.sh" "${PASS[@]}" || { echo "dotfiles setup did not finish cleanly; install steps not run" >&2; exit 1; }
+  "$DOT_DIR/install.sh" "${PASS[@]}" || { echo "dotfiles setup did not finish cleanly; install steps not run" >&2; exit 1; }
 fi
 
 # 3. install steps (not in the dotfiles repo)
