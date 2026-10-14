@@ -128,17 +128,38 @@ ensure_repo "$BOOTSTRAP_DIR" "$BOOTSTRAP_REPO_URL"
 ensure_repo "$DOTFILES_DIR" "$DOTFILES_REPO_URL"
 
 # ──────────────────────────────────────────────
-#  Groups, presets, menu
+#  Categories, groups, presets, menus
 # ──────────────────────────────────────────────
-# Common groups run on every OS; the OS list adds its own (see profiles/).
-COMMON_GROUPS="dotfiles base-cli shell nettools vi vim-plugins fzf npm python asdf docker git-tools llm ssh ssh-dropbox fonts zsh-framework"
-case "$PROFILE" in
-  macos) OS_GROUPS="brew-core brew-extras iterm2 macos-defaults macos-apps rosetta" ;;
-  *)     OS_GROUPS="homelab editors browsers desktop chefdk eclipse" ;;
-esac
+# Categories are the first menu. Groups inside each are alphabetical; "dotfiles" sorts first
+# in setup, so it runs before anything that depends on its links. The OS picks the categories.
+CATEGORIES="setup editors cli languages infra ai apps"
+case "$PROFILE" in macos) CATEGORIES="setup editors cli languages infra ai mac" ;; esac
+
+category_groups() {
+  case "$1" in
+    setup)     echo "dotfiles fonts fzf shell zsh-framework" ;;
+    editors)   echo "eclipse editors vi vim-plugins" ;;
+    cli)       echo "base-cli git-tools nettools ssh ssh-dropbox" ;;
+    languages) echo "asdf npm python" ;;
+    infra)     echo "chefdk docker homelab" ;;
+    ai)        echo "llm" ;;
+    apps)      echo "browsers desktop" ;;
+    mac)       echo "brew-core brew-extras iterm2 macos-apps macos-defaults rosetta" ;;
+  esac
+}
+
+# A group that needs another one; the other one is added to the selection with a note.
+group_requires() {
+  case "$1" in
+    npm)         echo "asdf" ;;
+    vim-plugins) echo "vi" ;;
+    brew-extras) echo "brew-core" ;;
+    *)           echo "" ;;
+  esac
+}
+
 GUI_GROUPS="editors fonts browsers desktop brew-extras iterm2 macos-apps macos-defaults"
 
-AVAILABLE_GROUPS="$COMMON_GROUPS $OS_GROUPS"
 # drop_words <words> <excluded>: keep the words of $1 that are not in $2
 # (a function, not an inline case: bash 3.2, the macOS /bin/sh, mis-parses case inside $(...))
 drop_words() {
@@ -150,6 +171,15 @@ drop_words() {
   done
   echo "$dw_out"
 }
+
+AVAILABLE_GROUPS=""
+for c in $CATEGORIES; do AVAILABLE_GROUPS="$AVAILABLE_GROUPS$(category_groups "$c") "; done
+# the OS list: groups that belong to another OS only are dropped
+case "$PROFILE" in
+  macos) OS_ONLY_OUT="eclipse editors browsers desktop homelab chefdk" ;;
+  *)     OS_ONLY_OUT="brew-core brew-extras iterm2 macos-apps macos-defaults rosetta" ;;
+esac
+AVAILABLE_GROUPS=$(drop_words "$AVAILABLE_GROUPS" "$OS_ONLY_OUT")
 if [ "$HEADLESS" = 1 ]; then
   AVAILABLE_GROUPS=$(drop_words "$AVAILABLE_GROUPS" "$GUI_GROUPS")
 fi
@@ -165,6 +195,7 @@ group_items_only() {
 }
 group_items() {
   case "$1" in
+    asdf)           echo "node terraform helm stern consul vault azure gcloud pnpm java rust" ;;
     nettools)       echo "tailscale" ;;
     vi)             echo "vim nvim" ;;
     python)         echo "via-asdf" ;;
@@ -186,6 +217,7 @@ group_items() {
 }
 group_default_items() {
   case "$1" in
+    asdf)           echo "node terraform helm" ;;
     vi)             echo "vim" ;;
     git-tools)      echo "gh" ;;
     llm)            echo "claude caveman" ;;
@@ -221,13 +253,53 @@ case "$PRESET" in
 esac
 PRESELECT=$(filter_to "$PRESELECT" "$AVAILABLE_GROUPS")
 
+# categories with at least one group on this machine
+USABLE_CATS=""
+for c in $CATEGORIES; do
+  cg=$(filter_to "$(category_groups "$c")" "$AVAILABLE_GROUPS")
+  [ -n "$cg" ] && USABLE_CATS="$USABLE_CATS$c "
+done
+
 if [ "$ASSUME_YES" = 1 ]; then
   SELECTED=$PRESELECT
 else
-  prompt_menu "Bootstrap [$PROFILE] — pick groups (numbers toggle, ENTER to confirm)" \
-    "$AVAILABLE_GROUPS" "$PRESELECT"
-  SELECTED=$prompt_selections
+  # a category is on by default when one of its groups is preselected
+  cat_pre=""
+  for c in $USABLE_CATS; do
+    cp=$(filter_to "$(category_groups "$c")" "$PRESELECT")
+    [ -n "$cp" ] && cat_pre="$cat_pre$c "
+  done
+  prompt_menu "Categories — pick what to set up (numbers toggle, ENTER to confirm)" "$USABLE_CATS" "$cat_pre"
+  CHOSEN_CATS=$prompt_selections
+
+  SELECTED=""
+  for c in $CATEGORIES; do
+    case " $CHOSEN_CATS " in *" $c "*) ;; *) continue ;; esac
+    cg=$(filter_to "$(category_groups "$c")" "$AVAILABLE_GROUPS")
+    cp=$(filter_to "$cg" "$PRESELECT")
+    prompt_menu "$c — pick groups (numbers toggle, ENTER to confirm)" "$cg" "$cp"
+    SELECTED="$SELECTED$prompt_selections "
+  done
 fi
+
+# add what the selected groups need, then run them in category order
+for g in $SELECTED; do
+  for r in $(group_requires "$g"); do
+    case " $SELECTED " in *" $r "*) ;; *)
+      log_arrow "$g needs $r — adding it"
+      SELECTED="$SELECTED$r "
+    ;; esac
+  done
+done
+ORDERED=""
+for c in $CATEGORIES; do
+  for g in $(category_groups "$c"); do
+    case " $SELECTED " in *" $g "*)
+      case " $ORDERED " in *" $g "*) ;; *) ORDERED="$ORDERED$g " ;; esac ;;
+    esac
+  done
+done
+SELECTED=$(filter_to "$ORDERED" "$AVAILABLE_GROUPS")
 
 # Tier 2: item picks for selected groups that have them
 for g in $SELECTED; do

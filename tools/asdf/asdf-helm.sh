@@ -1,8 +1,6 @@
 #!/bin/bash
-# helm and stern, latest
+# Helm, latest (stern has its own item: asdf-k8s.sh)
 . "$(dirname "$0")/asdf-lib.sh"
 asdf_setup
 asdf_add helm
 asdf_install_global helm
-asdf_add stern
-asdf_install_global stern

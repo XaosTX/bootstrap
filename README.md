@@ -39,12 +39,22 @@ Flags:
 
 The last menu choices are saved in `.selected` (ignored by git).
 
+## Menus
+
+`setup.sh` asks in three steps:
+
+1. **Categories:** setup, editors, cli, languages, infra, ai, apps (Linux) or mac (macOS).
+2. **Groups** inside each chosen category, alphabetical.
+3. **Items** for the groups that have them, for example the tools to install with `asdf`.
+
+Groups that need another one (`npm` needs `asdf`, `vim-plugins` needs `vi`, `brew-extras` needs `brew-core`) add it and say so.
+
 ## OS support
 
-| OS | Profile | Package manager | Groups |
-|----|---------|-----------------|--------|
-| Ubuntu, Debian, Mint | `profiles/ubuntu.sh`, `debian.sh`, `mint.sh` | apt | common + `homelab editors browsers desktop chefdk eclipse` |
-| macOS | `profiles/macos.sh` | Homebrew | common + `brew-core brew-extras iterm2 macos-defaults macos-apps rosetta` |
+| OS | Profile | Package manager | Categories |
+|----|---------|-----------------|------------|
+| Ubuntu, Debian, Mint | `profiles/ubuntu.sh`, `debian.sh`, `mint.sh` | apt | setup, editors, cli, languages, infra, ai, apps |
+| macOS | `profiles/macos.sh` | Homebrew | setup, editors, cli, languages, infra, ai, mac |
 
 `profile_prepare` (macOS) installs the Xcode command line tools and Homebrew
 before anything else. Fedora, RHEL, Alpine and Arch are detected but have no
@@ -52,18 +62,19 @@ profile yet.
 
 ## Groups
 
-**Common** (every OS): `dotfiles`, `base-cli`, `shell`, `nettools`, `vi`,
-`vim-plugins`, `fzf`, `npm`, `python`, `asdf`, `docker`, `git-tools`, `llm`,
-`ssh`, `fonts`, `zsh-framework`.
+| Category | Groups |
+|----------|--------|
+| setup | `dotfiles`, `fonts`, `fzf`, `shell`, `zsh-framework` (off) |
+| editors | `eclipse` (Linux, off), `editors` (Linux GUI), `vi`, `vim-plugins` |
+| cli | `base-cli`, `git-tools`, `nettools`, `ssh`, `ssh-dropbox` (off) |
+| languages | `asdf` (items: node, terraform, helm, stern, consul, vault, azure, gcloud, pnpm, java, rust), `npm`, `python` |
+| infra | `chefdk` (Linux, off), `docker`, `homelab` (Linux) |
+| ai | `llm` |
+| apps | `browsers`, `desktop` (Linux GUI) |
+| mac | `brew-core`, `brew-extras`, `iterm2`, `macos-apps`, `macos-defaults`, `rosetta` |
 
-**Items** are picked in the menu. Defaults are marked in `group_default_items`
-in `setup.sh`; off-by-default items are risky or old:
-
-- `chefdk`: end-of-life Chef DK, installed by piping a script into `sudo bash`.
-- `eclipse`: pinned to 2016 releases.
-- `dock-clear-apps`: removes every pinned Dock icon.
-- `zsh-framework`: oh-my-zsh, prezto, powerline. zinit is the dotfiles default
-  and needs nothing here.
+"(off)" groups have no default item and run only if you pick one. The dotfiles
+group always runs first, since the rest depends on its links.
 
 ## Local settings
 

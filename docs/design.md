@@ -381,7 +381,7 @@ interpreter versions; asdf-python is a fallback, not the default.
 | **Other runtimes** (node, ruby, java…) | **asdf**  | **asdf**                 |
 | Runtime pinning               | `.python-version` (uv) / `.tool-versions` (asdf) | same |
 | System/CLI packages           | `brew`           | apt/dnf/apk/pacman       |
-| asdf itself installed via     | `brew`           | git-clone (`tools/asdf/init.sh`) |
+| asdf itself installed via     | `brew`           | git-clone (`groups/asdf.sh`) |
 
 - **Python is managed by `uv` on both OSes.** `uv python install 3.12.4` installs a
   specific, **prebuilt standalone** Python — same command, same result on Linux and
