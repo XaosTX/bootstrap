@@ -139,8 +139,19 @@ esac
 GUI_GROUPS="editors fonts browsers desktop brew-extras iterm2 macos-apps macos-defaults"
 
 AVAILABLE_GROUPS="$COMMON_GROUPS $OS_GROUPS"
+# drop_words <words> <excluded>: keep the words of $1 that are not in $2
+# (a function, not an inline case: bash 3.2, the macOS /bin/sh, mis-parses case inside $(...))
+drop_words() {
+  dw_out=""
+  for dw_x in $1; do
+    dw_skip=0
+    for dw_y in $2; do [ "$dw_x" = "$dw_y" ] && dw_skip=1; done
+    [ "$dw_skip" = 0 ] && dw_out="$dw_out$dw_x "
+  done
+  echo "$dw_out"
+}
 if [ "$HEADLESS" = 1 ]; then
-  AVAILABLE_GROUPS=$(for g in $AVAILABLE_GROUPS; do case " $GUI_GROUPS " in *" $g "*) ;; *) echo "$g" ;; esac; done | tr '\n' ' ')
+  AVAILABLE_GROUPS=$(drop_words "$AVAILABLE_GROUPS" "$GUI_GROUPS")
 fi
 QUICK_GROUPS="base-cli shell nettools vi"
 
