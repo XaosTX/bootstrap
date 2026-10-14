@@ -11,6 +11,7 @@
 #   anything else         passed to the dotfiles install.sh (--yes, --dry-run, --choose, --profiles, --home ...)
 
 BOOT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+export BOOT_ROOT
 DOT_DIR="${DOTFILES_DIR:-$HOME/g/dotfiles}"
 DOT_REPO="https://github.com/XaosTX/dotfiles.git"
 DO_CLONE=1; SKIP_DOTFILES=; INSTALL=; OPTIONAL=; DRY=; ASSUME_YES=; PASS=()
