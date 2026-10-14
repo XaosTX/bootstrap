@@ -45,6 +45,7 @@ pkg_map() {
     esac ;;
     brew) case "$1" in
       ncat) echo nmap ;;
+      pip)  echo python3 ;;  # pip ships with the python3 formula; there is no pip formula
       *)    echo "$1" ;;
     esac ;;
     pacman) case "$1" in
