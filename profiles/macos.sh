@@ -73,6 +73,6 @@ profile_ca_bundle() {
   # Used for the rest of this run; child processes inherit them
   export CURL_CA_BUNDLE="$PROFILE_CA_BUNDLE" SSL_CERT_FILE="$PROFILE_CA_BUNDLE"
   export NODE_EXTRA_CA_CERTS="$PROFILE_CA_BUNDLE" REQUESTS_CA_BUNDLE="$PROFILE_CA_BUNDLE"
-  export AWS_CA_BUNDLE="$PROFILE_CA_BUNDLE"
+  export AWS_CA_BUNDLE="$PROFILE_CA_BUNDLE" PIP_CERT="$PROFILE_CA_BUNDLE"
 }
 
