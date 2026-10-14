@@ -1,3 +1,6 @@
-asdf plugin-add stern
-asdf install stern latest
-asdf global stern latest
+#!/bin/bash
+# stern (Kubernetes log tailing), latest
+. "$(dirname "$0")/asdf-lib.sh"
+asdf_setup
+asdf_add stern
+asdf_install_global stern

@@ -47,35 +47,35 @@ while true; do
     case "$choice" in
         1)
             echo "Installing terraform"
-            sh "$BOOTSTRAP/tools/asdf/asdf-terraform.sh"
+            bash "$BOOTSTRAP/tools/asdf/asdf-terraform.sh"
             ;;
         2)
             echo "Installing nodejs (latest LTS)"
-            sh "$BOOTSTRAP/tools/asdf/asdf-node.sh"
+            bash "$BOOTSTRAP/tools/asdf/asdf-node.sh"
             ;;
         3)
             echo "Installing google-cloud-sdk"
-            sh "$BOOTSTRAP/tools/asdf/asdf-google-sdk.sh"
+            bash "$BOOTSTRAP/tools/asdf/asdf-google-sdk.sh"
             ;;
         4)
             echo "Installing rust"
-            sh "$BOOTSTRAP/tools/asdf/asdf-rust-lang.sh"
+            bash "$BOOTSTRAP/tools/asdf/asdf-rust-lang.sh"
             ;;
         5)
             echo "Installing helm"
-            sh "$BOOTSTRAP/tools/asdf/asdf-helm.sh"
+            bash "$BOOTSTRAP/tools/asdf/asdf-helm.sh"
             ;;
         6)
             echo "Installing java"
-            sh "$BOOTSTRAP/tools/asdf/asdf-java.sh"
+            bash "$BOOTSTRAP/tools/asdf/asdf-java.sh"
             ;;
         7)
             echo "Installing all plugins"
-            sh "$BOOTSTRAP/tools/asdf/asdf-terraform.sh"
-            sh "$BOOTSTRAP/tools/asdf/asdf-node.sh"
-            sh "$BOOTSTRAP/tools/asdf/asdf-google-sdk.sh"
-            sh "$BOOTSTRAP/tools/asdf/asdf-rust-lang.sh"
-            sh "$BOOTSTRAP/tools/asdf/asdf-helm.sh"
+            bash "$BOOTSTRAP/tools/asdf/asdf-terraform.sh"
+            bash "$BOOTSTRAP/tools/asdf/asdf-node.sh"
+            bash "$BOOTSTRAP/tools/asdf/asdf-google-sdk.sh"
+            bash "$BOOTSTRAP/tools/asdf/asdf-rust-lang.sh"
+            bash "$BOOTSTRAP/tools/asdf/asdf-helm.sh"
             ;;
         8)
             echo "Goodbye!"

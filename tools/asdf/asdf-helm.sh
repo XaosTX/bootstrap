@@ -1,6 +1,8 @@
-asdf plugin-add helm
-asdf install helm latest
-asdf global helm latest
-asdf plugin-add stern
-asdf install stern latest
-asdf global stern latest
+#!/bin/bash
+# helm and stern, latest
+. "$(dirname "$0")/asdf-lib.sh"
+asdf_setup
+asdf_add helm
+asdf_install_global helm
+asdf_add stern
+asdf_install_global stern

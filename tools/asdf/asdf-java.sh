@@ -1,7 +1,7 @@
-asdf plugin-add java https://github.com/halcyon/asdf-java
-# asdf install java openjdk-21.0.1
-asdf install java latest:adoptopenjdk-11
-asdf global java latest:adoptopenjdk-11
-
-
-# maven 3.8.7
+#!/bin/bash
+# Java: adoptopenjdk 11 (halcyon plugin). adoptopenjdk is discontinued; move to temurin when you pick a version.
+. "$(dirname "$0")/asdf-lib.sh"
+asdf_setup
+asdf_add java https://github.com/halcyon/asdf-java
+asdf_install_global java adoptopenjdk-11
+# Maven 3.8.7 is installed by hand

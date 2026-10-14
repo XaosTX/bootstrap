@@ -1,8 +1,7 @@
 #!/bin/bash
-
-asdf plugin add gcloud https://github.com/jthegedus/asdf-gcloud
-asdf install gcloud latest
-asdf set gcloud latest --home
-
-# Extras
-# gcloud components install 
+# Google Cloud SDK (gcloud), latest
+. "$(dirname "$0")/asdf-lib.sh"
+asdf_setup
+asdf_add gcloud https://github.com/jthegedus/asdf-gcloud
+asdf_install_global gcloud
+# Extras: gcloud components install (by hand)

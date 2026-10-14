@@ -31,7 +31,7 @@ done
 if [ "${DRY_RUN:-0}" = 1 ]; then
   log_arrow "[dry-run] tools/asdf/init.sh plugin menu"
 elif [ -r /dev/tty ]; then
-  sh "$BOOTSTRAP_DIR/tools/asdf/init.sh" "$BOOTSTRAP_DIR" </dev/tty
+  bash "$BOOTSTRAP_DIR/tools/asdf/init.sh" "$BOOTSTRAP_DIR" </dev/tty
 else
   log_arrow "No TTY — skipping plugin menu; run tools/asdf/init.sh later"
 fi
