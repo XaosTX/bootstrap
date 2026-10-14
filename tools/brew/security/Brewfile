@@ -1,0 +1,5 @@
+# brew bundle --file=./tools/brew/security/Brewfile
+brew "gitleaks"
+brew "opa"
+brew "conftest"
+cask "wizcli"

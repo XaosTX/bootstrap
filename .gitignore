@@ -1,2 +1,19 @@
 # Local logs and scratch
 *.log
+
+# Bootstrap per-machine state (menu choices) and homelab settings with NAS names
+.selected
+groups/homelab.conf
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# macOS
+.DS_Store
+
+# Editor / OS junk
+*.swp
+*~

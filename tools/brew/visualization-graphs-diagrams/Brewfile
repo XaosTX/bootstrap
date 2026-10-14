@@ -1,0 +1,5 @@
+# brew bundle --file=./tools/brew/visualization-graphs-diagrams/Brewfile
+
+brew "turbot/tap/powerpipe"  # https://powerpipe.io/downloads
+brew "turbot/tap/steampipe"  # https://steampipe.io/downloads
+

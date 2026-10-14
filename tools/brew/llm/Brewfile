@@ -1,0 +1,5 @@
+# brew bundle --file=./tools/brew/llm/Brewfile
+cask "claude-code"
+
+tap "gleanwork/tap"
+brew "gleanwork/tap/glean-cli"

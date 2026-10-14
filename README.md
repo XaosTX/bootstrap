@@ -1,39 +1,82 @@
 # bootstrap
 
-Sets up a machine: gets the dotfiles, runs their setup, then runs this machine's install steps.
+One interactive script that sets up a new machine: it detects the OS, installs
+the packages and tools for it, and then runs the dotfiles install.
 
-    ./bootstrap.sh --dry-run --yes                      # the dotfiles plan, and the steps that would run
-    ./bootstrap.sh --yes --install                      # dotfiles (no prompts) and the install steps
-    ./bootstrap.sh --install --optional                 # install steps, then the optional steps (asked one by one)
+- **Entry point:** `setup.sh`. It finds the OS (`lib/os.sh`), loads the matching
+  profile (`profiles/`), and shows a group menu. The menu offers the groups for
+  that OS; numbers toggle, ENTER confirms.
+- **Dotfiles:** the `dotfiles` group clones `XaosTX/dotfiles` to `~/g/dotfiles`
+  and runs its `install.sh`.
+- **Groups:** `groups/*.sh`, one per feature. Each group reads its items from
+  `ITEMS`, which the menu fills in (tier 2).
 
-## What it does
+## Run it
 
-1. Clones `XaosTX/dotfiles` to `~/g/dotfiles`, or pulls it if it's already there.
-2. Runs the dotfiles `install.sh` with the same flags you gave. Any warning there stops the run.
-3. Runs the install steps for this OS, if `--install` is given:
-   - `steps/common/`: fonts; asdf and the latest LTS Node.js (via `asdf/plugins.txt`); npm 12 with the cooldown settings.
-   - `steps/darwin/`: Xcode tools, Homebrew, the core packages in `brew/Brewfile`, fzf, iTerm2 preferences, vim plugins.
-   - `steps/linux/`: apt packages and `dist-upgrade`, vim plugins.
-4. With `--optional`, runs `steps/optional/`:
-   - Shared: oh-my-zsh and prezto.
-   - macOS: the optional Brewfile groups (`brew/optional/`, asked one by one), Dock settings, powerline.
-   - Linux: Chef DK (disabled until fixed), Eclipse with eclim (old releases).
-   Asks for each one unless `--yes` is given.
+```sh
+curl -fsSL https://raw.githubusercontent.com/XaosTX/bootstrap/main/setup.sh | sh
+```
 
-`steps/deferred/` holds the Dropbox key step. Nothing runs it.
+or from a clone:
 
-## Flags
+```sh
+git clone https://github.com/XaosTX/bootstrap.git ~/g/bootstrap
+cd ~/g/bootstrap
+./setup.sh                  # menu
+./setup.sh --dry-run --all  # print the plan, install nothing
+./setup.sh --quick --yes    # CLI basics only, no menu
+```
+
+Flags:
 
 | Flag | Meaning |
-|---|---|
-| `--dotfiles-dir DIR` | The dotfiles checkout (default `~/g/dotfiles`). |
-| `--dotfiles-repo URL` | Repo to clone when the checkout is missing. |
-| `--no-clone` | Use the checkout as it is; do not clone or pull. |
-| `--skip-dotfiles` | Run only the install steps. |
-| `--install` | Run the install steps for this OS. |
-| `--optional` | Also run the optional steps. Implies `--install`. |
-| anything else | Passed to the dotfiles `install.sh` (`--yes`, `--dry-run`, `--choose`, `--profiles`, `--home`). |
+|------|---------|
+| `--quick`, `--min` | preset: `base-cli shell nettools vi` |
+| `--headless` | hide GUI groups |
+| `--all` | preselect every group for this OS |
+| `--yes`, `-y` | accept the preselection, no menu |
+| `--dry-run` | print what would run |
 
-## Status
+The last menu choices are saved in `.selected` (ignored by git).
 
-The macOS packages come from codeangler's current bootstrap (Brewfiles, Dock settings), with employer taps removed. The asdf and npm steps are new. Still to port from codeangler's bootstrap: the other asdf plugins (`tools/asdf/`), the ssh group, Docker, git tools beyond gh, glab and lazygit, and the App Store step. Review each step before running `--install` on a Mac.
+## OS support
+
+| OS | Profile | Package manager | Groups |
+|----|---------|-----------------|--------|
+| Ubuntu, Debian, Mint | `profiles/ubuntu.sh`, `debian.sh`, `mint.sh` | apt | common + `homelab editors browsers desktop chefdk eclipse` |
+| macOS | `profiles/macos.sh` | Homebrew | common + `brew-core brew-extras iterm2 macos-defaults macos-apps rosetta` |
+
+`profile_prepare` (macOS) installs the Xcode command line tools and Homebrew
+before anything else. Fedora, RHEL, Alpine and Arch are detected but have no
+profile yet.
+
+## Groups
+
+**Common** (every OS): `dotfiles`, `base-cli`, `shell`, `nettools`, `vi`,
+`vim-plugins`, `fzf`, `npm`, `python`, `asdf`, `docker`, `git-tools`, `llm`,
+`ssh`, `fonts`, `zsh-framework`.
+
+**Items** are picked in the menu. Defaults are marked in `group_default_items`
+in `setup.sh`; off-by-default items are risky or old:
+
+- `chefdk`: end-of-life Chef DK, installed by piping a script into `sudo bash`.
+- `eclipse`: pinned to 2016 releases.
+- `dock-clear-apps`: removes every pinned Dock icon.
+- `zsh-framework`: oh-my-zsh, prezto, powerline. zinit is the dotfiles default
+  and needs nothing here.
+
+## Local settings
+
+- `groups/homelab.conf`: your NAS names and share list. Copy
+  `groups/homelab.conf.example` to `~/.config/bootstrap/homelab.conf`. It is
+  kept out of git.
+- `.selected`: the last menu choices, kept out of git.
+
+Passwords and tokens are never written to this repository. The homelab SMB
+password is prompted once and stored root-only on the machine.
+
+## Attribution and history
+
+See `NOTICE.md`. The older dotfiles-only install steps and the separate
+`setup-*.sh` wrappers are gone; their work is in `groups/`, `profiles/` and
+`setup.sh`. `docs/design.md` describes the groups model.

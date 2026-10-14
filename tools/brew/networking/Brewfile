@@ -1,0 +1,10 @@
+# brew bundle --file=./tools/brew/networking/Brewfile
+brew "curl"
+brew "ipcalc"
+brew "libxslt"
+brew "netcat"
+brew "nmap"
+brew "wget"
+cask "postman"
+cask "wireshark"
+cask "apache-directory-studio"

@@ -1,0 +1,9 @@
+# brew bundle --file=./tools/brew/virtualization/Brewfile
+
+brew "minikube"
+tap "hashicorp/tap"
+brew "hashicorp/tap/consul-k8s"
+cask "balenaetcher"
+brew "kind"
+# cask "virtualbox"   m1 in compatiable ~2024-07
+# cask "vagrant"

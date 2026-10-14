@@ -1,0 +1,5 @@
+# brew bundle --file=./tools/brew/browsers/Brewfile
+cask "brave-browser"
+cask "firefox"
+cask "drawio"
+cask "foxitreader"

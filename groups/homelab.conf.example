@@ -1,0 +1,39 @@
+# homelab.conf — per-machine NAS / LAN settings for groups/homelab.sh
+#
+#   mkdir -p ~/.config/bootstrap && cp groups/homelab.conf.example ~/.config/bootstrap/homelab.conf
+#
+# Sourced as POSIX sh. NO SECRETS HERE — the SMB password is prompted once by
+# groups/homelab.sh and stored root-only in $SMB_CRED_FILE.
+
+# NAS hostname (mDNS name with the `mdns` item, or a raw IP).
+NAS_HOST=nas.local
+# NAS_HOST=192.168.1.10
+
+# ── SMB (default) ──────────────────────────────────────────────
+# Use a read-only account on the NAS for a media box.
+NAS_SMB_USER=your-nas-user
+
+# Share names as the NAS lists them. Append `:name` to choose the local
+# mountpoint: `Media:media` mounts share `Media` at $NAS_SMB_ROOT/media.
+NAS_SMB_SHARES="music photo video"
+
+# Local mount root — share `music` lands at /mnt/nas/music.
+NAS_SMB_ROOT=/mnt/nas
+
+# Extra cifs options, appended verbatim. `ro` makes writes fail at the mount.
+NAS_SMB_OPTS="ro"
+# Older NAS firmware that refuses SMB 3.1.1:
+# NAS_SMB_OPTS="ro,vers=2.1"
+
+# ── NFS (optional; must be enabled per-share on the NAS) ───────
+# Full export paths. Empty = no NFS mounts.
+NAS_NFS_EXPORTS=""
+# NAS_NFS_EXPORTS="/volume1/music /volume1/video"
+NAS_NFS_ROOT=/mnt/nfs
+
+# ── Shared ─────────────────────────────────────────────────────
+# Seconds idle before systemd unmounts a share again.
+NAS_IDLE_TIMEOUT=600
+
+# Where the SMB username/password file is written (root-only, 0600).
+# SMB_CRED_FILE=/etc/samba/credentials/nas.local
