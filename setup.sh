@@ -259,6 +259,15 @@ if [ "$DRY_RUN" != 1 ]; then
   } >"$CACHE_FILE"
 fi
 
+# Shell profiles: report any a group changed (third-party installers edit them unless told not to)
+PROFILE_FILES="$HOME/.zshrc $HOME/.zprofile $HOME/.zshenv $HOME/.zlogin $HOME/.bashrc $HOME/.bash_profile $HOME/.profile"
+snapshot_profiles() {
+  for pf in $PROFILE_FILES; do
+    [ -e "$pf" ] && cksum "$pf" 2>/dev/null | awk -v f="$pf" '{print f, $1}'
+  done
+}
+PROFILE_BEFORE=$(snapshot_profiles)
+
 # ──────────────────────────────────────────────
 #  Dispatch
 # ──────────────────────────────────────────────
@@ -274,6 +283,16 @@ for g in $SELECTED; do
   fi
   ITEMS="$g_items_sel" sh "$BOOTSTRAP_DIR/groups/$g.sh" || log_error "group $g reported errors"
 done
+
+PROFILE_AFTER=$(snapshot_profiles)
+if [ "$PROFILE_BEFORE" != "$PROFILE_AFTER" ]; then
+  log_error "shell profile files changed during this run — review them (git diff for symlinked ones):"
+  for pf in $PROFILE_FILES; do
+    case "$PROFILE_BEFORE" in *"$pf "*) b=$(echo "$PROFILE_BEFORE" | grep "^$pf " | cut -d' ' -f2) ;; *) b="" ;; esac
+    a=$(echo "$PROFILE_AFTER" | grep "^$pf " | cut -d' ' -f2)
+    [ "$a" != "$b" ] && log_arrow "$pf"
+  done
+fi
 
 # ──────────────────────────────────────────────
 #  Done

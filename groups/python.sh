@@ -13,8 +13,8 @@ if command -v uv >/dev/null 2>&1; then
   log_success "uv already installed"
 else
   # uv isn't packaged in Debian/Ubuntu apt — official installer drops it in ~/.local/bin
-  run sh -c 'curl -LsSf https://astral.sh/uv/install.sh | sh'
-  log_arrow "uv installed to ~/.local/bin — pin interpreters with 'uv python install 3.x.y'"
+  run sh -c 'curl -LsSf https://astral.sh/uv/install.sh | UV_NO_MODIFY_PATH=1 sh'
+  log_arrow "uv installed to ~/.local/bin (PATH comes from the dotfiles) — pin interpreters with 'uv python install 3.x.y'"
 fi
 
 if has_item via-asdf; then
