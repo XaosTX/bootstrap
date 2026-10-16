@@ -366,6 +366,20 @@ if [ "$PROFILE_BEFORE" != "$PROFILE_AFTER" ]; then
   done
 fi
 
+# End of run: the dotfiles once more, non-interactive, so configs for apps and commands
+# that this run installed get linked. The start-of-run pass ran before they existed.
+case " $SELECTED " in
+  *" dotfiles "*)
+    if [ -f "$DOTFILES_DIR/install.sh" ]; then
+      log_header "Dotfiles — links for everything installed in this run"
+      if [ "$DRY_RUN" = 1 ]; then
+        bash "$DOTFILES_DIR/install.sh" --dry-run --yes
+      else
+        bash "$DOTFILES_DIR/install.sh" --yes || log_error "dotfiles (end of run) reported warnings"
+      fi
+    fi ;;
+esac
+
 # ──────────────────────────────────────────────
 #  Done
 # ──────────────────────────────────────────────
